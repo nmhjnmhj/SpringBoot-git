@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="jquery-1.8.3.min.js" ></script>
+    <script type="text/javascript">
+        function batchDeletes(){
+            //判断至少写了一项
+            var checkedNum = $("input[name='subcheck']:checked").length;
+            if(checkedNum==0){
+                alert("请至少选择一项!");
+                return false;
+            }
+            if(confirm("确定删除所选项目?")){
+                var checkedList = new Array();
+                $("input[name='subcheck']:checked").each(function(){
+                    checkedList.push($(this).val());
+                });
+                $.ajax({
+                    type:"POST",
+                    url:"deladmin",
+                    data:{"delitems":checkedList.toString()},
+                    datatype:"html",
+                    success:function(data){
+                        /*         $("[name='checkbox2']:checkbox").attr("checked",false); */
+                        if(data=true){
+                            alert("删除成功！");
+                        }else{
+                            alert("删除失败！");
+                        }
+                        window.location.href="/findAll";
+
+                    },
+                    error:function(data){
+                        alert('删除失败!');
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    main页面
+    <div sec:authorize="!isAuthenticated()">
+        <!--<h2>这是未登录</h2>-->
+        游客您好，请先进行登陆！
+        <a th:href="@{/tologin}">点击登陆</a>
+    </div>
+
+
+    <div sec:authorize="isAuthenticated()">
+        <h2>
+            <!--这是登陆过后-->
+            <span sec:authentication="name"></span>
+            <span>，您好，您的权限有：</span>
+            <span sec:authentication="principal.authorities"></span>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" th:value="注销退出"/>
+            </form>
+           <!-- <a th:href="@{/logout}">注销退出2</a>-->
+        </h2>
+    </div>
+    <div sec:authorize="hasAuthority('add')">
+        <a th:href="@{toaddUser}" th:text="添加用户"></a>
+    </div>
+    <!--<h3 th:text="${mag}">这里是h3</h3>-->
+    <br/>
+    <div sec:authorize="hasAuthority('sel')">
+        <table width="98%" border="0" cellpadding="2" cellspacing="1" bgcolor="#D1DDAA" align="center" style="margin-top:8px">
+            <tr align="center" bgcolor="#FAFAF1" height="22">
+                <td width="20%">ID</td>
+                <td width="20%">用户名</td>
+                <td width="20%">密码</td>
+                <td width="20%">删除</td>
+            </tr>
+            <tr th:each="user:${users}" >
+                <td th:text="${user.getId()}" bgcolor="#FFFFFF" align="center"></td>
+                <td th:text="${user.getUsername()}" bgcolor="#FFFFFF" align="center"></td>
+                <td th:text="${user.getPassword()}" bgcolor="#FFFFFF" align="center"></td>
+                <td bgcolor="#FFFFFF" align="center">
+                    <input type="checkbox" th:value="${user.getId()}" name="subcheck">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" bgcolor="#FFFFFF">
+                    <button onclick="batchDeletes()">删除</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

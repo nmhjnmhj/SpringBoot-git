@@ -1,0 +1,20 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qhit.springbootmybatisdemo1.dao.QuanXianMapper">
+
+    <select id="findAll" resultType="com.qhit.springbootmybatisdemo1.beans.QuanXian">
+		SELECT * from quanxian
+	</select>
+
+    <select id="findByAdminUserId" resultType="com.qhit.springbootmybatisdemo1.beans.QuanXian" parameterType="int">
+		select q.* from user2 u
+           LEFT JOIN user2_role ur on u.id= ur.uid
+           LEFT JOIN role r on ur.rid=r.id
+           LEFT JOIN role_qx rq on rq.rid=r.id
+           LEFT JOIN quanxian q on q.id =rq.qid
+           where u.id=#{userId}
+	</select>
+
+</mapper>

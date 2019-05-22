@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <form method="post" th:action="@{/tologin}" >
+        user:<input type="text" name="username"/><br/>
+        pwd:<input type="password" name="password"/><br/>
+        <input type="checkbox" name="remeber" />点击记住登陆信息<br/>
+        <input type="submit" value="提交"/>
+    </form>
+    <h1 th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></h1>
+</body>
+</html>
